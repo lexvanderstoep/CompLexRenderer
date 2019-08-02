@@ -1,4 +1,5 @@
-import org.jetbrains.annotations.NotNull;
+import Model.Sphere;
+import Model.World;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -41,7 +42,7 @@ public class Camera {
         
         BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 600, 600);
 
-        File myOutputFile = new File("World.png");
+        File myOutputFile = new File("Model.World.png");
         ImageIO.write(myRenderedImage, "PNG", myOutputFile);
     }
 }
