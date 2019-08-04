@@ -27,6 +27,14 @@ public class Vector3D {
                this.z * that.z;
     }
 
+    public Vector3D add(Vector3D that){
+        return new Vector3D(this.x + that.x, this.y + that.y, this.z + that.z);
+    }
+
+    public Vector3D minus(Vector3D that) {
+        return this.add(that.scale(-1));
+    }
+
     public Vector3D cross(Vector3D that) {
         return new Vector3D(this.y * that.z - this.z * that.y,
                             this.z * that.x - this.x * that.z,
