@@ -1,48 +1,53 @@
+import Data.Vector3D;
 import Model.Sphere;
 import Model.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
-public class Camera {
-    double x, y, z;
+import static Data.Vector3D.UNIT_X;
+import static Data.Vector3D.ZERO;
+
+public abstract class Camera {
+    Vector3D position;
     double phi; // radians
-    double horizontalViewAngle, verticalViewAngle; // radians
 
-    public Camera(double x, double y, double z, double phi, double horizontalViewAngle, double verticalViewAngle) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Camera(Vector3D position, double phi) {
+        this.position = position;
         this.phi = phi;
-        this.horizontalViewAngle = horizontalViewAngle;
-        this.verticalViewAngle = verticalViewAngle;
     }
 
-    public BufferedImage renderImage(World world, int width, int height) {
-        BufferedImage myImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+    protected Color traceRay(Vector3D origin, Vector3D direction, World world) {
+        for (Sphere sphere : world) {
+            // If a ray goes through an object, then return the colour of that object
+            if (sphere.distanceToRay(origin, direction) <= 0) {
+                return sphere.getColor();
+            }
+        }
 
-        // TODO: Insert rendering code here.
-        myImage.setRGB(10, 10, Color.BLUE.getRGB());
-        myImage.setRGB(10, 11, Color.RED.getRGB());
-        myImage.setRGB(10, 12, Color.GREEN.getRGB());
-
-        return myImage;
+        return Color.BLACK;
     }
+
+    public abstract BufferedImage renderImage(World world, int width, int height);
 
     public static void main(String[] args) throws IOException {
-        Camera myCamera = new Camera(0, 0, 0, 0, 0.5*Math.PI, 0.5*Math.PI);
-        Sphere mySphere = new Sphere(5, 5, 0, 3, Color.BLUE);
-        Set<Sphere> myObjects = Collections.singleton(mySphere);
-        World myWorld = new World(myObjects);
+        Camera myCamera = new OrthographicCamera(new Vector3D(5.0, 0, 0), Math.PI, 4, 3);
+        Sphere mySphereOne = new Sphere(new Vector3D(0, 0, 0), 1, Color.BLUE);
+        Sphere mySphereTwo = new Sphere(new Vector3D(0, 0.5, 0.2), 0.8, Color.RED);
+        Sphere mySphereThree = new Sphere (new Vector3D(0, -0.5, 0), 0.5, Color.YELLOW);
+        World myWorld = new World();
+        myWorld.addObject(mySphereOne);
+        myWorld.addObject(mySphereTwo);
+        myWorld.addObject(mySphereThree);
         
-        BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 600, 600);
+        BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 800, 600);
 
-        File myOutputFile = new File("Model.World.png");
+        File myOutputFile = new File("World.png");
         ImageIO.write(myRenderedImage, "PNG", myOutputFile);
     }
 }
