@@ -40,9 +40,9 @@ public class Sphere extends WorldObject {
             double t2 = -OdotD - root;
             if (t1 >= 0 || t2 >= 0) {
                 double t = (t1 < t2 && t1 >= 0) ? t1 : t2;
-                Vector3D pt = origin.add(direction.scale(t));
-                Vector3D normal = pt.minus(position).normalise();
-                return new Hit(pt, normal, t);
+                Vector3D hitPoint = origin.add(direction.scale(t));
+                Vector3D hitNormal = hitPoint.minus(position).normalise();
+                return new Hit(this, hitPoint, hitNormal, t);
             }
         }
         return null;

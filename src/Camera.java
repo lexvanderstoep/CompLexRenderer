@@ -4,17 +4,14 @@ import Model.PointLight;
 import Model.Sphere;
 import Model.World;
 import Model.WorldObject;
-import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 import static Data.Vector3D.UNIT_X;
-import static Data.Vector3D.ZERO;
 
 public abstract class Camera {
     protected static Color BACKGROUND_COLOR = Color.BLACK;
@@ -27,24 +24,17 @@ public abstract class Camera {
         this.phi = phi;
     }
 
+    public Vector3D getViewDirection() {
+        return UNIT_X.rotateZ(phi);
+    }
+
     protected Color traceRay(Vector3D origin, Vector3D direction, World world) {
-        WorldObject closestHitObject = null;
-        double closestDistance = Double.POSITIVE_INFINITY;
-        Hit closestHit = null;
         Color myColor = BACKGROUND_COLOR;
 
-        // Compute the ray trace hit.
-        for (WorldObject object : world.getObjects()) {
-            // If a ray goes through an object, then return the colour of that object
-            Hit myRayTraceHit = object.computeHit(origin, direction);
-            if (myRayTraceHit != null) {
-                if (myRayTraceHit.getDistanceFromOrigin() < closestDistance) {
-                    closestHitObject = object;
-                    closestHit = myRayTraceHit;
-                    myColor = closestHitObject.getColor();
-                    closestDistance = closestHit.getDistanceFromOrigin();
-                }
-            }
+        Hit closestHit = findClosestHit(origin, direction, world);
+
+        if (closestHit != null) {
+            myColor = closestHit.getHitObject().getColor();
         }
 
         // Compute lightning.
@@ -53,7 +43,14 @@ public abstract class Camera {
             double beta = 0.0;
 
             for (PointLight light : world.getLights()) {
-                Vector3D L = light.getPosition().minus(closestHit.getHitLocation());
+                // Check if there are no objects in the way.
+                Vector3D L = light.getPosition().minus(closestHit.getHitLocation()).normalise();
+                double EPS = 0.01;
+                Hit lightHit = findClosestHit(closestHit.getHitLocation().add(L.scale(EPS)), L, world);
+                if (lightHit != null) {
+                    continue; // There is an object in the way to the light.
+                }
+
                 Vector3D N = closestHit.getHitNormal();
                 Vector3D minusL = L.scale(-1.0);
                 Vector3D R = minusL.minus(N.scale(2.0 * minusL.dot(N))).normalise();
@@ -80,14 +77,30 @@ public abstract class Camera {
         return myColor;
     }
 
+    private Hit findClosestHit(Vector3D origin, Vector3D direction, World world) {
+        Hit closestHit = null;
+
+        for (WorldObject object : world.getObjects()) {
+            Hit myRayTraceHit = object.computeHit(origin, direction);
+            if (myRayTraceHit != null) {
+                if (closestHit == null || myRayTraceHit.getDistanceFromOrigin() < closestHit.getDistanceFromOrigin()) {
+                    closestHit = myRayTraceHit;
+                }
+            }
+        }
+
+        return closestHit;
+    }
+
     public abstract BufferedImage renderImage(World world, int width, int height);
 
     public static void main(String[] args) throws IOException {
-        Camera myCamera = new OrthographicCamera(new Vector3D(5.0, 0, 0), Math.PI, 4, 3);
+        //Camera myCamera = new OrthographicCamera(new Vector3D(5.0, 0, 0), Math.PI, 4, 3);
+        Camera myCamera = new PerspectiveCamera(new Vector3D(5.0, 0, 0), Math.PI, 0.25*Math.PI, 0.1875 * Math.PI);
         Sphere mySphereOne = new Sphere(new Vector3D(0, -0.4, -0.2), 0.5, Color.BLUE, "One");
-        Sphere mySphereTwo = new Sphere(new Vector3D(-5, 0.5, 0.2), 0.8, Color.RED, "Two");
-        Sphere mySphereThree = new Sphere (new Vector3D(-0.5, -0.9, 0), 0.5, Color.YELLOW, "Three");
-        PointLight mySun = new PointLight(new Vector3D(2.0, 3.0, 2.0));
+        Sphere mySphereTwo = new Sphere(new Vector3D(-20, 0.5, 1.2), 0.8, Color.RED, "Two");
+        Sphere mySphereThree = new Sphere (new Vector3D(-1.5, -0.9, 0.5), 0.5, Color.YELLOW, "Three");
+        PointLight mySun = new PointLight(new Vector3D(2.0, -3.0, 2.0));
         World myWorld = new World();
         myWorld.addObject(mySphereOne);
         myWorld.addObject(mySphereTwo);
