@@ -5,7 +5,7 @@ import Data.Vector3D;
 
 import java.awt.*;
 
-public class Sphere {
+public class Sphere extends WorldObject {
     Vector3D position;
     double radius;
     Color color;
@@ -16,10 +16,19 @@ public class Sphere {
         this.color = color;
     }
 
+    public Sphere(Vector3D position, double radius, Color color, String name) {
+        super(name);
+        this.position = position;
+        this.radius = radius;
+        this.color = color;
+    }
+
+    @Override
     public Color getColor() {
         return color;
     }
 
+    @Override
     public Hit computeHit (Vector3D origin, Vector3D direction) {
         double OdotD = origin.minus(position).dot(direction);
         double OdotO = origin.minus(position).dot(origin.minus(position));

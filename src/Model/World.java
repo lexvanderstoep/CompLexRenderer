@@ -7,26 +7,32 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class World implements Iterable<Sphere> {
-    Set<Sphere> theObjects;
+public class World {
+    Set<WorldObject> theObjects;
+    Set<PointLight> theLights;
 
     public World() {
-        this(new HashSet<>());
+        this(new HashSet<>(), new HashSet<>());
     }
 
-    public World(Set<Sphere> theObjects) {
-        this.theObjects = theObjects;
+    public World(Set<WorldObject> aObjects, Set<PointLight> aLights) {
+        this.theObjects = aObjects;
+        this.theLights = aLights;
     }
 
-    public boolean addObject(Sphere aSphere) {
-        return theObjects.add(aSphere);
+    public boolean addObject(WorldObject anObject) {
+        return theObjects.add(anObject);
     }
 
-    @NotNull
-    @Override
-    public Iterator<Sphere> iterator() {
-        return theObjects.iterator();
+    public boolean addLight(PointLight aPointLight) {
+        return theLights.add(aPointLight);
     }
 
+    public Set<WorldObject> getObjects() {
+        return theObjects;
+    }
 
+    public Set<PointLight> getLights() {
+        return theLights;
+    }
 }

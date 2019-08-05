@@ -23,8 +23,9 @@ public class OrthographicCamera extends Camera {
         Vector3D myRayDirection = UNIT_X.rotateZ(phi);
         Vector3D myCameraRight = myRayDirection.cross(UNIT_Z);
 
-        for (int x = 0; x < width; x++){
+        for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                // Compute the ray origin
                 Vector3D myRayPosition = position;
                 myRayPosition = myRayPosition.add(myCameraRight.scale((((double)x/width) - 0.5) * cameraWidth));
                 myRayPosition = myRayPosition.minus(UNIT_Z.scale((((double)y/height) - 0.5) * cameraHeight));
