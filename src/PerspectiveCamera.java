@@ -19,8 +19,7 @@ public class PerspectiveCamera extends Camera {
 
         // TODO: Insert rendering code here.
         Graphics myGraphics = myImage.getGraphics();
-        myGraphics.setColor(Color.BLUE);
-        myGraphics.fillRect(10, 10, 50, 100);
+        myGraphics.drawString("Not implemented yet", 10, 10);
 
         return myImage;
     }

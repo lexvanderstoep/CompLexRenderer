@@ -1,5 +1,6 @@
 package Model;
 
+import Data.Hit;
 import Data.Vector3D;
 import org.junit.jupiter.api.Test;
 
@@ -12,15 +13,20 @@ class SphereTest {
     private static double EPS = 1E-5;
 
     @Test
-    void distanceToRay() {
-        Sphere mySphere = new Sphere(ZERO, 1, Color.BLACK);
-        Vector3D myRayOriginOne = new Vector3D(2, 0, 0);
-        Vector3D myRayDirectionOne = UNIT_Y;
-        assert(equals(mySphere.distanceToRay(myRayOriginOne, myRayDirectionOne), 1.0));
+    void computeHit() {
+        Sphere myVictim = new Sphere(ZERO, 1, Color.BLACK);
+        Vector3D myRayOrigin = new Vector3D(5, 0, 0);
+        Vector3D myRayDirection = new Vector3D(-1, 0, 0);
 
-        Vector3D myRayOriginTwo = UNIT_X;
-        Vector3D myRayDirectionTwo = UNIT_X;
-        assert equals(mySphere.distanceToRay(myRayOriginTwo, myRayDirectionTwo), -1.0);
+        Hit myHit = myVictim.computeHit(myRayOrigin, myRayDirection);
+        assert equals(myHit.getDistanceFromOrigin(), 4.0);
+        assert equals(myHit.getHitLocation(), new Vector3D(1, 0, 0));
+        assert equals(myHit.getHitNormal(), new Vector3D(1, 0, 0));
+
+        myRayOrigin = new Vector3D(5, 2, 0);
+
+        myHit = myVictim.computeHit(myRayOrigin, myRayDirection);
+        assertNull(myHit);
     }
 
     private boolean equals (Vector3D a, Vector3D b) {
