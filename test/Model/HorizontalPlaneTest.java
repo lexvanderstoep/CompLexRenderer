@@ -12,7 +12,11 @@ class HorizontalPlaneTest {
 
     @Test
     void computeHit() {
-        HorizontalPlane myVictim = new HorizontalPlane(new Material(ZERO, null, null, 0),0);
+        HorizontalPlane myVictim = new HorizontalPlane(new Material(
+                ZERO,
+                null,
+                null,
+                0,0),0);
         Vector3D myRayOrigin = new Vector3D(0, 0, 4);
         Vector3D myRayDirection = new Vector3D(0, 0, -1);
 

@@ -12,7 +12,13 @@ class SphereTest {
 
     @Test
     void computeHit() {
-        Sphere myVictim = new Sphere(new Material(ZERO, null, null, 0), ZERO, 1);
+        Sphere myVictim = new Sphere(new Material(
+                ZERO,
+                null,
+                null,
+                0, 0),
+                ZERO,
+                1);
         Vector3D myRayOrigin = new Vector3D(5, 0, 0);
         Vector3D myRayDirection = new Vector3D(-1, 0, 0);
 

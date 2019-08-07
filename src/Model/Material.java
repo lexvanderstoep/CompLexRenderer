@@ -7,12 +7,14 @@ public class Material {
     private Vector3D diffuseCoefficient;
     private Vector3D specularCoefficient;
     private double phongCoefficient;
+    private double reflectionCoefficient;
 
-    public Material(Vector3D ambientCoefficient, Vector3D diffuseCoefficient, Vector3D specularCoefficient, double phongCoefficient) {
+    public Material(Vector3D ambientCoefficient, Vector3D diffuseCoefficient, Vector3D specularCoefficient, double phongCoefficient, double reflectionCoefficient) {
         this.ambientCoefficient = ambientCoefficient;
         this.diffuseCoefficient = diffuseCoefficient;
         this.specularCoefficient = specularCoefficient;
         this.phongCoefficient = phongCoefficient;
+        this.reflectionCoefficient = reflectionCoefficient;
     }
 
     public Vector3D getAmbientCoefficient() {
@@ -29,5 +31,9 @@ public class Material {
 
     public double getPhongCoefficient() {
         return phongCoefficient;
+    }
+
+    public double getReflectionCoefficient() {
+        return reflectionCoefficient;
     }
 }

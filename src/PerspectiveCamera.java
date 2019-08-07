@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 public class PerspectiveCamera extends Camera {
     private double horizontalViewAngle, verticalViewAngle; // radians
 
-    public PerspectiveCamera(Color backgroundColor, Vector3D position, double phi, double horizontalViewAngle, double verticalViewAngle) {
-        super(backgroundColor, position, phi);
+    public PerspectiveCamera(Color backgroundColor, Vector3D position, double phi, int maxReflectionDepth, double horizontalViewAngle, double verticalViewAngle) {
+        super(backgroundColor, position, phi, maxReflectionDepth);
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
     }
@@ -37,7 +37,7 @@ public class PerspectiveCamera extends Camera {
                                                       .add(topToBottom.scale((double)y/height))
                                                       .normalise();
 
-                Color myRayTracedColor = traceRay(myRayPosition, myRayDirection, world);
+                Color myRayTracedColor = traceRay(myRayPosition, myRayDirection, world, 0);
                 myImage.setRGB(x, y ,myRayTracedColor.getRGB());
             }
 
