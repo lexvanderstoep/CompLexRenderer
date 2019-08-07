@@ -3,24 +3,20 @@ package Model;
 import Data.Hit;
 import Data.Vector3D;
 
-import java.awt.*;
-
 public class Sphere extends WorldObject {
     Vector3D position;
     double radius;
-    Color color;
 
-    public Sphere(Vector3D position, double radius, Color color) {
-        super(color);
+    public Sphere(Material material, Vector3D position, double radius) {
+        super(material);
         this.position = position;
         this.radius = radius;
     }
 
-    public Sphere(Vector3D position, double radius, Color color, String name) {
-        super(name, color);
+    public Sphere(String name, Material material, Vector3D position, double radius) {
+        super(name, material);
         this.position = position;
         this.radius = radius;
-        this.color = color;
     }
 
     @Override

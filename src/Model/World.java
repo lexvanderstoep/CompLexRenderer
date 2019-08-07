@@ -1,23 +1,22 @@
 package Model;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
+import java.awt.*;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class World {
-    Set<WorldObject> theObjects;
-    Set<PointLight> theLights;
+    private Set<WorldObject> theObjects;
+    private Set<PointLight> theLights;
+    private Color ambientLightning;
 
-    public World() {
-        this(new HashSet<>(), new HashSet<>());
+    public World(Color ambientLightning) {
+        this(new HashSet<>(), new HashSet<>(), ambientLightning);
     }
 
-    public World(Set<WorldObject> aObjects, Set<PointLight> aLights) {
+    public World(Set<WorldObject> aObjects, Set<PointLight> aLights, Color ambientLightning) {
         this.theObjects = aObjects;
         this.theLights = aLights;
+        this.ambientLightning = ambientLightning;
     }
 
     public boolean addObject(WorldObject anObject) {
@@ -34,5 +33,9 @@ public class World {
 
     public Set<PointLight> getLights() {
         return theLights;
+    }
+
+    public Color getAmbientLightning() {
+        return ambientLightning;
     }
 }

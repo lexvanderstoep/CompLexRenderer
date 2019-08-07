@@ -7,21 +7,21 @@ import org.junit.jupiter.api.Test;
 import static Data.Vector3D.ZERO;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class SphereTest {
+class HorizontalPlaneTest {
     private static double EPS = 1E-5;
 
     @Test
     void computeHit() {
-        Sphere myVictim = new Sphere(new Material(ZERO, null, null, 0), ZERO, 1);
-        Vector3D myRayOrigin = new Vector3D(5, 0, 0);
-        Vector3D myRayDirection = new Vector3D(-1, 0, 0);
+        HorizontalPlane myVictim = new HorizontalPlane(new Material(ZERO, null, null, 0),0);
+        Vector3D myRayOrigin = new Vector3D(0, 0, 4);
+        Vector3D myRayDirection = new Vector3D(0, 0, -1);
 
         Hit myHit = myVictim.computeHit(myRayOrigin, myRayDirection);
         assert equals(myHit.getDistanceFromOrigin(), 4.0);
-        assert equals(myHit.getHitLocation(), new Vector3D(1, 0, 0));
-        assert equals(myHit.getHitNormal(), new Vector3D(1, 0, 0));
+        assert equals(myHit.getHitLocation(), new Vector3D(0, 0, 0));
+        assert equals(myHit.getHitNormal(), new Vector3D(0, 0, 1));
 
-        myRayOrigin = new Vector3D(5, 2, 0);
+        myRayDirection = new Vector3D(0, 0, 1);
 
         myHit = myVictim.computeHit(myRayOrigin, myRayDirection);
         assertNull(myHit);

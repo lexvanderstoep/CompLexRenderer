@@ -3,20 +3,18 @@ package Model;
 import Data.Hit;
 import Data.Vector3D;
 
-import java.awt.*;
-
 import static Data.Vector3D.UNIT_Z;
 
 public class HorizontalPlane extends WorldObject {
     private double height;
 
-    public HorizontalPlane(Color color, double height) {
-        super(color);
+    public HorizontalPlane(Material material, double height) {
+        super(material);
         this.height = height;
     }
 
-    public HorizontalPlane(String name, Color color, double height) {
-        super(name, color);
+    public HorizontalPlane(String name, Material material, double height) {
+        super(name, material);
         this.height = height;
     }
 

@@ -4,15 +4,11 @@ import Model.World;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static Data.Vector3D.UNIT_X;
-import static Data.Vector3D.UNIT_Z;
-
 public class PerspectiveCamera extends Camera {
-    double horizontalViewAngle, verticalViewAngle; // radians
+    private double horizontalViewAngle, verticalViewAngle; // radians
 
-    public PerspectiveCamera(Vector3D position, double phi,
-                             double horizontalViewAngle, double verticalViewAngle) {
-        super(position, phi);
+    public PerspectiveCamera(Color backgroundColor, Vector3D position, double phi, double horizontalViewAngle, double verticalViewAngle) {
+        super(backgroundColor, position, phi);
         this.horizontalViewAngle = horizontalViewAngle;
         this.verticalViewAngle = verticalViewAngle;
     }

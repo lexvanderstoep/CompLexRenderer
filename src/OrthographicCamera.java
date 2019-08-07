@@ -10,8 +10,8 @@ import static Data.Vector3D.UNIT_Z;
 public class OrthographicCamera extends Camera {
     private double cameraWidth, cameraHeight;
 
-    public OrthographicCamera(Vector3D position, double phi, double cameraWidth, double cameraHeight) {
-        super(position, phi);
+    public OrthographicCamera(Color backgroundColor, Vector3D position, double phi, double cameraWidth, double cameraHeight) {
+        super(backgroundColor, position, phi);
         this.cameraWidth = cameraWidth;
         this.cameraHeight = cameraHeight;
     }

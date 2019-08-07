@@ -1,25 +1,24 @@
 import Data.Hit;
 import Data.Vector3D;
+import Model.Material;
 import Model.PointLight;
-import Model.Sphere;
 import Model.World;
 import Model.WorldObject;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static Data.Vector3D.UNIT_X;
 
 public abstract class Camera {
-    protected static Color BACKGROUND_COLOR = Color.BLACK;
+    private static double EPS = 1E-5;
 
-    Vector3D position;
-    double phi; // radians
+    protected Color backgroundColor;
+    protected Vector3D position;
+    protected double phi; // radians
 
-    public Camera(Vector3D position, double phi) {
+    public Camera(Color backgroundColor, Vector3D position, double phi) {
+        this.backgroundColor = backgroundColor;
         this.position = position;
         this.phi = phi;
     }
@@ -29,57 +28,90 @@ public abstract class Camera {
     }
 
     protected Color traceRay(Vector3D origin, Vector3D direction, World world) {
-        Color myColor = BACKGROUND_COLOR;
+        Hit hit = findClosestHit(origin, direction, world);
 
-        Hit closestHit = findClosestHit(origin, direction, world);
-
-        if (closestHit != null) {
-            myColor = closestHit.getHitObject().getColor();
+        if (hit == null) {
+            return backgroundColor;
         }
 
-        // Compute lightning.
-        if (closestHit != null) {
-            double alpha = 0.0;
-            double beta = 0.0;
+        Material hitMaterial = hit.getHitObject().getMaterial();
 
-            for (PointLight light : world.getLights()) {
-                // Check if there are no objects in the way.
-                Vector3D L = light.getPosition().minus(closestHit.getHitLocation()).normalise();
-                double EPS = 0.01;
-                Hit lightHit = findClosestHit(closestHit.getHitLocation().add(L.scale(EPS)), L, world);
-                if (lightHit != null) {
-                    continue; // There is an object in the way to the light.
-                }
+        // Ambient colour
+        Color myColor = scaleColor(
+                world.getAmbientLightning(),
+                hitMaterial.getAmbientCoefficient());
 
-                Vector3D N = closestHit.getHitNormal();
-                Vector3D minusL = L.scale(-1.0);
-                Vector3D R = minusL.minus(N.scale(2.0 * minusL.dot(N))).normalise();
-                Vector3D V = origin.minus(closestHit.getHitLocation()).normalise();
-                double RdotV = Math.max(0, R.dot(V));
+        Color diffusionColor = Color.BLACK;
+        Color specularColor = Color.BLACK;
 
-                double diffusion = Math.max(0, L.dot(N));
-                double specular = Math.pow(RdotV, 7.0);
-
-                alpha += diffusion;
-                beta += specular;
+        for (PointLight light : world.getLights()) {
+            // Check if there are no objects in the way.
+            Vector3D L = light.getPosition().minus(hit.getHitLocation()).normalise();
+            Hit lightHit = findClosestHit(hit.getHitLocation().add(L.scale(EPS)), L, world);
+            if (lightHit != null) {
+                continue; // There is an object in the way to the light.
             }
 
-            alpha = Math.max(Math.min(1.0, alpha) * 0.8, 0.1);
-            beta = Math.max(Math.min(1.0, beta), 0);
+            Vector3D N = hit.getHitNormal();
+            Vector3D minusL = L.scale(-1.0);
+            Vector3D R = minusL.minus(N.scale(2.0 * minusL.dot(N))).normalise();
+            Vector3D V = origin.minus(hit.getHitLocation()).normalise();
+            double RdotV = Math.max(0, R.dot(V));
 
-            int r = Math.min(255, (int)(myColor.getRed() * alpha + 256 * beta));
-            int b = Math.min(255, (int)(myColor.getBlue() * alpha + 256 * beta));
-            int g = Math.min(255, (int)(myColor.getGreen() * alpha + 256 * beta));
-            int a = myColor.getAlpha();
-            myColor = new Color(r, g, b, a);
+            double diffusionCoefficient = Math.max(0, L.dot(N));
+            double specularCoefficient = Math.pow(RdotV, hitMaterial.getPhongCoefficient());
+
+            // Diffusion lightning
+            //  I_diff = I_p * K_d * (N . L)
+            diffusionColor = addColors(
+                    diffusionColor,
+                    scaleColor(
+                            scaleColor(light.getColor(), hitMaterial.getDiffuseCoefficient()),
+                            diffusionCoefficient));
+
+            // Specular lightning
+            // I_spec = I_p * K_s * (R . V)^7
+            specularColor = addColors(
+                    specularColor,
+                    scaleColor(
+                            scaleColor(light.getColor(), hitMaterial.getSpecularCoefficient()),
+                            specularCoefficient));
         }
 
+        myColor = addColors(addColors(myColor, specularColor), diffusionColor);
+
         return myColor;
+    }
+
+    private Color addColors(Color one, Color two) {
+        int r = Math.min(one.getRed() + two.getRed(), 255);
+        int g = Math.min(one.getGreen() + two.getGreen(), 255);
+        int b = Math.min(one.getBlue() + two.getBlue(), 255);
+        int a = Math.min(one.getAlpha() + two.getAlpha(), 255);
+        return new Color(r, g, b, a);
+    }
+
+    private Color scaleColor(Color one, Vector3D factor) {
+        return new Color(
+                (int)(one.getRed() * factor.x()),
+                (int)(one.getGreen() * factor.y()),
+                (int)(one.getBlue() * factor.z()),
+                one.getAlpha());
+    }
+
+    private Color scaleColor(Color one, double factor) {
+        return new Color(
+                (int)(one.getRed() * factor),
+                (int)(one.getGreen() * factor),
+                (int)(one.getBlue() * factor),
+                one.getAlpha());
     }
 
     private Hit findClosestHit(Vector3D origin, Vector3D direction, World world) {
         Hit closestHit = null;
 
+        // Check for all objects in the world, whether the ray hits them.
+        // Return the closest.
         for (WorldObject object : world.getObjects()) {
             Hit myRayTraceHit = object.computeHit(origin, direction);
             if (myRayTraceHit != null) {
