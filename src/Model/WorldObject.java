@@ -7,20 +7,24 @@ import java.awt.*;
 
 public abstract class WorldObject {
     private String name;
+    private Color color;
 
-    public WorldObject() {
-        this("");
+    public WorldObject(Color color) {
+        this("", color);
     }
 
-    public WorldObject(String name) {
+    public WorldObject(String name, Color color) {
         this.name = name;
+        this.color = color;
     }
 
     public String getName() {
         return name;
     }
 
-    public abstract Hit computeHit (Vector3D origin, Vector3D direction);
+    public Color getColor() {
+        return color;
+    }
 
-    public abstract Color getColor();
+    public abstract Hit computeHit (Vector3D origin, Vector3D direction);
 }

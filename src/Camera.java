@@ -64,7 +64,7 @@ public abstract class Camera {
                 beta += specular;
             }
 
-            alpha = Math.max(Math.min(1.0, alpha) * 0.8, 0.2);
+            alpha = Math.max(Math.min(1.0, alpha) * 0.8, 0.1);
             beta = Math.max(Math.min(1.0, beta), 0);
 
             int r = Math.min(255, (int)(myColor.getRed() * alpha + 256 * beta));
@@ -93,23 +93,4 @@ public abstract class Camera {
     }
 
     public abstract BufferedImage renderImage(World world, int width, int height);
-
-    public static void main(String[] args) throws IOException {
-        //Camera myCamera = new OrthographicCamera(new Vector3D(5.0, 0, 0), Math.PI, 4, 3);
-        Camera myCamera = new PerspectiveCamera(new Vector3D(5.0, 0, 0), Math.PI, 0.25*Math.PI, 0.1875 * Math.PI);
-        Sphere mySphereOne = new Sphere(new Vector3D(0, -0.4, -0.2), 0.5, Color.BLUE, "One");
-        Sphere mySphereTwo = new Sphere(new Vector3D(-20, 0.5, 1.2), 0.8, Color.RED, "Two");
-        Sphere mySphereThree = new Sphere (new Vector3D(-1.5, -0.9, 0.5), 0.5, Color.YELLOW, "Three");
-        PointLight mySun = new PointLight(new Vector3D(2.0, -3.0, 2.0));
-        World myWorld = new World();
-        myWorld.addObject(mySphereOne);
-        myWorld.addObject(mySphereTwo);
-        myWorld.addObject(mySphereThree);
-        myWorld.addLight(mySun);
-        
-        BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 1600, 1200);
-
-        File myOutputFile = new File("World.png");
-        ImageIO.write(myRenderedImage, "PNG", myOutputFile);
-    }
 }

@@ -11,21 +11,16 @@ public class Sphere extends WorldObject {
     Color color;
 
     public Sphere(Vector3D position, double radius, Color color) {
+        super(color);
         this.position = position;
         this.radius = radius;
-        this.color = color;
     }
 
     public Sphere(Vector3D position, double radius, Color color, String name) {
-        super(name);
+        super(name, color);
         this.position = position;
         this.radius = radius;
         this.color = color;
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
     }
 
     @Override
