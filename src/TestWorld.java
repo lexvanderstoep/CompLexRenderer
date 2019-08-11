@@ -57,6 +57,7 @@ public class TestWorld {
                 new Vector3D(-9, 1, 0.7),
                 0.7
                 );
+
         for (int i = -40; i < -30; i++) {
             for (int j = -5; j < 5; j++) {
                 Sphere smallSphere = new Sphere(
@@ -80,7 +81,7 @@ public class TestWorld {
         myWorld.addObject(mySphereThree);
         myWorld.addLight(mySun);
 
-        BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 3200, 2400);
+        BufferedImage myRenderedImage = myCamera.renderImage(myWorld, 1600, 1200);
 
         File myOutputFile = new File("World.png");
         ImageIO.write(myRenderedImage, "PNG", myOutputFile);
